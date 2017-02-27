@@ -14,7 +14,7 @@ F = audioFeatureExtraction.stFeatureExtraction(x, Fs, 0.050*Fs, 0.025*Fs);
 MFCC = np.array(F[8:20]).T
 
 #calculate distance matrix (VERY EXPENSIVE)
-dist_matrix = [[np.linalg.norm(i - j) for j in xrange(len(MFCC))] for i in xrange(len(MFCC))]
+dist_matrix = [[np.linalg.norm(MFCC[i] - MFCC[j]) for j in xrange(len(MFCC))] for i in xrange(len(MFCC))]
 #dist_matrix = np.zeros((len(MFCC), len(MFCC)))
 
 
