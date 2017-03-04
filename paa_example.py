@@ -22,9 +22,9 @@ if __name__ == "__main__":
     plt.show()
 
     # Extract chromagram
-        specgram, time_axis, freq_axis = audioFeatureExtraction.stSpectogram(x, Fs, round(Fs *0.04), round(Fs * 0.04), True)
+    specgram, time_axis, freq_axis = audioFeatureExtraction.stSpectogram(x, Fs, round(Fs *0.04), round(Fs * 0.04), True)
 
     # Extract chromagram
-         specgram, time_axis, freq_axis = audioFeatureExtraction.stChromagram(x, Fs, round(Fs *0.04), round(Fs * 0.04), True)
+    specgram, time_axis, freq_axis = audioFeatureExtraction.stChromagram(x, Fs, round(Fs *0.04), round(Fs * 0.04), True)
 
     print str(time.time() - start_time) + " seconds"
