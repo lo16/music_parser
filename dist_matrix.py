@@ -1,25 +1,49 @@
 from pyAudioAnalysis import audioBasicIO
 from pyAudioAnalysis import audioFeatureExtraction
+
+import pandas as pd
 import matplotlib.pyplot as plt
+import time
 import numpy as np 
 
-#here I use a single channel conversion of Koi
-#to use a stereo copy simply average the two channels (for now)
-[Fs, x] = audioBasicIO.readAudioFile("Koi_single_channel.wav");
+def read_audio(file_name):
+    '''
+    Reads a .wav file to convert into mfcc
+    Makes no folder assumptions. Please specify from root
+    '''
+    # here I use a single channel conversion of a wav file
+    # to use a stereo copy simply average the two channels (for now)
+    [fs, x] = audioBasicIO.readAudioFile(file_name)
 
-#TODO: tweak sample length
-F = audioFeatureExtraction.stFeatureExtraction(x, Fs, 0.050*Fs, 0.025*Fs);
+    #TODO: tweak sample length and figure out optimal
+    converted = audioFeatureExtraction.stFeatureExtraction(x, fs, 0.050*fs, 0.025*fs)
 
-#retrieve MFCCs from F and take the transpose for convenience
-MFCC = np.array(F[8:20]).T
+    return converted
 
-#calculate distance matrix (VERY EXPENSIVE)
-dist_matrix = [[np.linalg.norm(MFCC[i] - MFCC[j]) for j in xrange(len(MFCC))] for i in xrange(len(MFCC))]
-#dist_matrix = np.zeros((len(MFCC), len(MFCC)))
+def calc_distance(mfcc):
+    '''
+    Function to calculate the relative distance based on a MFCC
+    We loop through and calculate the distance on all pairs i and j
+    This function is very expensive
+    '''
+    start_time = time.time()
+    dist_matrix = [[np.linalg.norm(mfcc[i] - mfcc[j]) for j in xrange(len(mfcc))] for i in xrange(len(mfcc))]
+    
+    print "Matrix calc time: " + str(time.time() - start_time) + " secs"
 
+    return dist_matrix
 
-fig, ax = plt.subplots(figsize=(200,200))
-cax = ax.matshow(dist_matrix, interpolation='nearest')
-ax.grid(True)
-plt.title('MFCC similarity matrix')
-plt.show()
+if __name__ == "__main__":
+    # Assumes we are in music_parse folder
+    conv_audio = read_audio("Koi_single_channel.wav")
+
+    #retrieve MFCCs from converted audio
+    # take the transpose to realign columns
+    mfcc = np.array(conv_audio[8:20]).T
+    dist_matrix = calc_distance(mfcc)
+    pd.DataFrame(dist_matrix).to_pickle("koi_pickle.pkl")
+
+    # Plot the MFCC results
+    plt.imshow(dist_matrix, cmap='viridis', interpolation='nearest')
+    plt.title('MFCC similarity matrix')
+    plt.show()
