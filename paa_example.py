@@ -6,7 +6,7 @@ import time
 if __name__ == "__main__":
     start_time = time.time()
     # Import the sample audio file and extract features
-    [Fs, x] = audioBasicIO.readAudioFile("Koi_single_channel.wav")
+    [Fs, x] = audioBasicIO.readAudioFile("Koi_mono.wav")
     F = audioFeatureExtraction.stFeatureExtraction(x, Fs, 0.05*Fs, 0.0025*Fs)
 
     # Plot the general plot of ZCR and energy!
