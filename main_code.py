@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np 
 from scipy.fftpack import dct
 import pickle
+from pydub import AudioSegment
 
 NUM_FRAMES_PER_SECOND = 40
 
@@ -88,6 +89,25 @@ def process(song):
 # plt.title('MFCC similarity matrix')
 # plt.show()
 
+#NOTE: requires ffmpeg for wav conversion
+#checks if song is wav
+#if song is not wav, convert to wav
+#input: filename
+#output: unchanged filename if input was wav
+#	 	 filename of converted file if input was not wav
+def wav_check(root, song):
+	#print song, song.split('.')[-1]
+	if song.split('.')[-1] != 'wav':
+		wav_filename = os.path.splitext(os.path.basename(song))[0] + '.wav'
+		wav_filename = os.path.join(root, wav_filename)
+		#conversion starts
+		sound = AudioSegment.from_file(song, format=song.split('.')[-1])
+		sound = sound.set_channels(1)
+		sound.export(wav_filename, format='wav').close()
+		#end of conversion
+		return wav_filename
+	return song
+
 if __name__ == '__main__':
 	# MFCC = mfcc_extraction("Koi_mono.wav")
 	# dist_matrix = calc_dist_matrix(MFCC)
@@ -105,12 +125,14 @@ if __name__ == '__main__':
 	#8. when all songs are added, dump list to pickle
 
 	DCTs = []
+	directory = 'D:\\music\\current playlist\\a5'
 	#step 1
-	for root, dirs, files in os.walk("."):
+	for root, dirs, files in os.walk(directory):
 		for file in files:
+			file = os.path.join(root, file)
 			try:
-				#TODO: step 2
-
+				#step 2
+				file = wav_check(root, file)
 				#steps 3-7
 				DCTs.append(process(file))
 			except:
@@ -120,3 +142,13 @@ if __name__ == '__main__':
 	f = open('DCTs.p', 'wb')
 	pickle.dump(DCTs, f)
 	f.close()
+
+	directory = 'D:\\music\\current playlist\\a5'
+	for root, dirs, files in os.walk(directory):
+		for file in files:
+			if file == '01 - Eden.mp3':
+				file = os.path.join(root, file)
+				try:
+					file = wav_check(root, file)
+				except:
+					pass
