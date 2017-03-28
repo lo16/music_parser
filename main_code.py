@@ -143,12 +143,3 @@ if __name__ == '__main__':
 	pickle.dump(DCTs, f)
 	f.close()
 
-	directory = 'D:\\music\\current playlist\\a5'
-	for root, dirs, files in os.walk(directory):
-		for file in files:
-			if file == '01 - Eden.mp3':
-				file = os.path.join(root, file)
-				try:
-					file = wav_check(root, file)
-				except:
-					pass
