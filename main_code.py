@@ -141,7 +141,7 @@ def plot(mfcc, dist_matrix, spec, song_dct):
 
     # Plot the distance matrix
     fig, ax = plt.subplots(figsize=(200,200))
-    cax = ax.matshow(dist_matrix, cmpa='viridis', interpolation='nearest')
+    cax = ax.matshow(dist_matrix, cmap='viridis', interpolation='nearest')
     ax.grid(True)
     plt.title('MFCC similarity matrix')
     plt.show()
