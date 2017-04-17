@@ -5,6 +5,7 @@ Main code to process files from mfcc to an output dct for clustering analysis
 from pyAudioAnalysis import audioBasicIO
 from pyAudioAnalysis import audioFeatureExtraction
 from pydub import AudioSegment
+from joblib import Parallel, delayed
 
 # Core analysis packages
 import matplotlib.pyplot as plt
@@ -46,8 +47,8 @@ def calc_dist_matrix(mfcc):
     """
     # calculate distance matrix (VERY, VERY EXPENSIVE)
     # TODO: optimize this algorithm
-    dist_matrix = [[np.linalg.norm(mfcc[i] - mfcc[j]) for j in xrange(len(mfcc))] for i in xrange(len(mfcc))]
-
+    dist_matrix = [Parallel(n_jobs=3, backend="threading")(delayed(np.linalg.norm)(mfcc[i] - mfcc[j]) for j in xrange(len(mfcc))) for i in xrange(len(mfcc))]
+    #dist_matrix = [Parallel(n_jobs=3, backend="multiprocessing")(delayed(np.linalg.norm)(mfcc[i] - mfcc[j]) for j in xrange(len(mfcc))) for i in xrange(len(mfcc))]
     return dist_matrix
 
 def beat_spectrum(dist_matrix, fps=40):
